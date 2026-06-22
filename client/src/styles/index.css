@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #0f172a;
+  background: #f8fafc;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top left, rgba(37, 99, 235, 0.08), transparent 32rem),
+    #f8fafc;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+@layer components {
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2;
+  }
+
+  .card {
+  @apply rounded-xl border border-line bg-white;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+  .card-padding {
+    @apply p-5;
+  }
+
+  .btn-primary {
+  @apply focus-ring inline-flex items-center justify-center gap-2 rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-brandDark;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.06);
+}
+
+  .btn-secondary {
+    @apply focus-ring inline-flex items-center justify-center gap-2 rounded-lg border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink transition hover:bg-slate-50;
+  }
+
+  .input-field {
+    @apply focus-ring w-full rounded-lg border border-line bg-white px-3 py-2.5 text-sm outline-none placeholder:text-slate-400;
+  }
+
+  .page-container {
+    @apply mx-auto w-full max-w-7xl;
+  }
+}

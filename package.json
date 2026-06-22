@@ -1,0 +1,27 @@
+{
+  "name": "resolveiq-ai-supportops-copilot",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ResolveIQ is an AI-powered SupportOps copilot for knowledge-base answers, smart ticketing, routing, and support analytics.",
+  "type": "module",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c blue,green \"npm run dev --workspace server\" \"npm run dev --workspace client\"",
+    "dev:server": "npm run dev --workspace server",
+    "dev:client": "npm run dev --workspace client",
+    "start": "npm run start --workspace server",
+    "seed": "npm run seed --workspace server",
+    "lint": "npm run lint --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "build": "npm run build --workspaces --if-present"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
