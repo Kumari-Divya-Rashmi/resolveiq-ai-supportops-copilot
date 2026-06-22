@@ -1,16 +1,17 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: "class",
   content: ["./index.html", "./src/**/*.{js,jsx}"],
   theme: {
     extend: {
       colors: {
-        ink: "#0F172A",
-        muted: "#64748B",
-        brand: "#2563EB",
-        brandDark: "#1D4ED8",
-        soft: "#F8FAFC",
-        panel: "#FFFFFF",
-        line: "#E2E8F0",
+        ink: "rgb(var(--color-ink) / <alpha-value>)",
+        muted: "rgb(var(--color-muted) / <alpha-value>)",
+        brand: "rgb(var(--color-brand) / <alpha-value>)",
+        brandDark: "rgb(var(--color-brand-dark) / <alpha-value>)",
+        soft: "rgb(var(--color-soft) / <alpha-value>)",
+        panel: "rgb(var(--color-panel) / <alpha-value>)",
+        line: "rgb(var(--color-line) / <alpha-value>)",
         success: "#059669",
         warning: "#D97706",
         danger: "#DC2626"
