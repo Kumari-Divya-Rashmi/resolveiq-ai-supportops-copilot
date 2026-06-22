@@ -1,3 +1,8 @@
+const demoPassword = process.env.DEMO_USER_PASSWORD;
+
+if (!demoPassword) {
+  throw new Error("DEMO_USER_PASSWORD is required in server/.env for seeding demo users.");
+}
 export const demoTeams = [
   {
     name: "Billing Operations",
@@ -18,20 +23,20 @@ export const demoUsers = [
     name: "Asha Admin",
     email: "admin@resolveiq.test",
     role: "admin",
-    password: "ResolveIQ#123"
+    password: demoPassword
   },
   {
     name: "Ravi Agent",
     email: "agent@resolveiq.test",
     role: "agent",
-    password: "ResolveIQ#123",
+    password: demoPassword,
     teamName: "Technical Support"
   },
   {
     name: "Neha Customer",
     email: "user@resolveiq.test",
     role: "user",
-    password: "ResolveIQ#123"
+    password: demoPassword
   }
 ];
 

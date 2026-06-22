@@ -65,9 +65,9 @@ export function DemoCompanyPage() {
         <section className="mt-8 rounded-lg border border-line bg-slate-50 p-5">
           <h2 className="flex items-center gap-2 text-sm font-semibold"><ShieldCheck size={18} /> Seeded demo accounts</h2>
           <div className="mt-4 grid gap-3 md:grid-cols-3">
-            <code className="rounded-md border border-line bg-white p-3 text-sm">admin@resolveiq.test / ResolveIQ#123</code>
-            <code className="rounded-md border border-line bg-white p-3 text-sm">agent@resolveiq.test / ResolveIQ#123</code>
-            <code className="rounded-md border border-line bg-white p-3 text-sm">user@resolveiq.test / ResolveIQ#123</code>
+            <code className="rounded-md border border-line bg-white p-3 text-sm">admin@resolveiq.test / your local DEMO_USER_PASSWORD</code>
+            <code className="rounded-md border border-line bg-white p-3 text-sm">agent@resolveiq.test / your local DEMO_USER_PASSWORD</code>
+            <code className="rounded-md border border-line bg-white p-3 text-sm">user@resolveiq.test / your local DEMO_USER_PASSWORD</code>
           </div>
         </section>
       </section>

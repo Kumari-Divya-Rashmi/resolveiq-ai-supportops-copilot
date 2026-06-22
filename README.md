@@ -78,9 +78,10 @@ npm run build     # build the frontend
 
 The seed command creates:
 
-- Admin: `admin@resolveiq.test` / `ResolveIQ#123`
-- Agent: `agent@resolveiq.test` / `ResolveIQ#123`
-- User: `user@resolveiq.test` / `ResolveIQ#123`
+- Admin: `admin@resolveiq.test`
+- Agent: `agent@resolveiq.test`
+- User: `user@resolveiq.test`
+
 
 ## Security Notes
 

@@ -7,20 +7,17 @@ const demoAccounts = [
   {
     label: "Admin",
     icon: ShieldCheck,
-    email: "admin@resolveiq.test",
-    password: "ResolveIQ#123"
+    email: "admin@resolveiq.test"
   },
   {
     label: "Agent",
     icon: UserRoundCog,
-    email: "agent@resolveiq.test",
-    password: "ResolveIQ#123"
+    email: "agent@resolveiq.test"
   },
   {
     label: "User",
     icon: Bot,
-    email: "user@resolveiq.test",
-    password: "ResolveIQ#123"
+    email: "user@resolveiq.test"
   }
 ];
 
@@ -31,7 +28,7 @@ export function LoginPage() {
 
   const [form, setForm] = useState({
     email: "admin@resolveiq.test",
-    password: "ResolveIQ#123"
+    password: ""
   });
 
   const [error, setError] = useState("");
@@ -39,17 +36,28 @@ export function LoginPage() {
 
   async function handleSubmit(event) {
     event.preventDefault();
+
+    if (!form.email.trim() || !form.password.trim()) {
+      setError("Please enter both email and password.");
+      return;
+    }
+
     setLoading(true);
     setError("");
 
     try {
       const user = await login(form.email, form.password);
+
       const fallback =
-        user.role === "admin" ? "/app/admin/analytics" : user.role === "agent" ? "/app/agent" : "/app/chat";
+        user.role === "admin"
+          ? "/app/admin/analytics"
+          : user.role === "agent"
+            ? "/app/agent"
+            : "/app/chat";
 
       navigate(location.state?.from?.pathname || fallback, { replace: true });
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Login failed. Please check your credentials.");
     } finally {
       setLoading(false);
     }
@@ -58,8 +66,10 @@ export function LoginPage() {
   function useDemoAccount(account) {
     setForm({
       email: account.email,
-      password: account.password
+      password: ""
     });
+
+    setError("");
   }
 
   return (
@@ -70,6 +80,7 @@ export function LoginPage() {
             <div className="grid size-11 place-items-center rounded-xl bg-brand text-white">
               <LockKeyhole size={22} />
             </div>
+
             <div>
               <p className="font-bold">ResolveIQ</p>
               <p className="text-xs text-slate-400">AI SupportOps Copilot</p>
@@ -80,18 +91,24 @@ export function LoginPage() {
             <p className="text-sm font-bold uppercase tracking-wide text-blue-300">
               Secure workspace login
             </p>
+
             <h1 className="mt-4 text-5xl font-bold leading-tight">
               Manage AI answers, smart tickets, and support analytics.
             </h1>
+
             <p className="mt-5 text-base leading-8 text-slate-300">
               Sign in as admin, agent, or user to test the complete support workflow.
+              Demo email buttons are available, but the password must be entered locally.
             </p>
           </div>
         </div>
 
         <div className="grid gap-3">
           {["JWT authentication", "Role-based access", "AI ticket workflow"].map((item) => (
-            <div key={item} className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm font-semibold">
+            <div
+              key={item}
+              className="rounded-xl border border-white/10 bg-white/5 p-4 text-sm font-semibold"
+            >
               {item}
             </div>
           ))}
@@ -99,15 +116,23 @@ export function LoginPage() {
       </section>
 
       <section className="grid place-items-center px-5 py-10">
-        <form onSubmit={handleSubmit} className="w-full max-w-md rounded-2xl border border-line bg-white p-6 shadow-panel">
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-md rounded-2xl border border-line bg-white p-6 shadow-panel"
+        >
           <div className="text-center">
             <div className="mx-auto grid size-12 place-items-center rounded-2xl bg-blue-50 text-brand">
               <LockKeyhole size={24} />
             </div>
-            <p className="mt-4 text-sm font-bold uppercase tracking-wide text-brand">Welcome back</p>
+
+            <p className="mt-4 text-sm font-bold uppercase tracking-wide text-brand">
+              Welcome back
+            </p>
+
             <h1 className="mt-2 text-3xl font-bold">Sign in to workspace</h1>
+
             <p className="mt-2 text-sm text-muted">
-              Use demo accounts to test different roles.
+              Select a demo role email, then enter your local demo password.
             </p>
           </div>
 
@@ -135,9 +160,16 @@ export function LoginPage() {
             Email
             <input
               className="input-field mt-2"
+              type="email"
               value={form.email}
-              onChange={(event) => setForm({ ...form, email: event.target.value })}
+              onChange={(event) =>
+                setForm({
+                  ...form,
+                  email: event.target.value
+                })
+              }
               placeholder="you@example.com"
+              autoComplete="email"
             />
           </label>
 
@@ -147,8 +179,14 @@ export function LoginPage() {
               className="input-field mt-2"
               type="password"
               value={form.password}
-              onChange={(event) => setForm({ ...form, password: event.target.value })}
-              placeholder="Enter password"
+              onChange={(event) =>
+                setForm({
+                  ...form,
+                  password: event.target.value
+                })
+              }
+              placeholder="Enter your local demo password"
+              autoComplete="current-password"
             />
           </label>
 
