@@ -6,11 +6,12 @@ import {
   getTicketCopilot,
   getTicketForUser,
   listTicketsForUser,
+  reopenTicket,
   updateTicketStatus
 } from "../services/ticketService.js";
+import { mapUploadedFiles } from "../middleware/uploadMiddleware.js";
 import { sendCreated, sendSuccess } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import { mapUploadedFiles } from "../middleware/uploadMiddleware.js";
 
 export const listTickets = asyncHandler(async (req, res) => {
   const result = await listTicketsForUser(req.user, req.query);
@@ -36,6 +37,11 @@ export const createTicket = asyncHandler(async (req, res) => {
 export const patchTicketStatus = asyncHandler(async (req, res) => {
   const ticket = await updateTicketStatus(req.params.id, req.user, req.body.status);
   return sendSuccess(res, { ticket }, "Ticket status updated");
+});
+
+export const patchTicketReopen = asyncHandler(async (req, res) => {
+  const ticket = await reopenTicket(req.params.id, req.user, req.body.reason);
+  return sendSuccess(res, { ticket }, "Ticket reopened");
 });
 
 export const patchTicketAssign = asyncHandler(async (req, res) => {

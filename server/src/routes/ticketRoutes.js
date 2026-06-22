@@ -5,6 +5,7 @@ import {
   getTicket,
   listTickets,
   patchTicketAssign,
+  patchTicketReopen,
   patchTicketStatus,
   postFeedback,
   postTicketMessage
@@ -17,7 +18,9 @@ import {
   assignSchema,
   createTicketSchema,
   feedbackSchema,
+  listTicketQuerySchema,
   messageSchema,
+  reopenSchema,
   statusSchema,
   ticketIdParamSchema
 } from "../validators/ticketValidators.js";
@@ -25,11 +28,36 @@ import {
 export const ticketRoutes = Router();
 
 ticketRoutes.use(requireAuth);
-ticketRoutes.get("/", listTickets);
-ticketRoutes.post("/", upload.array("attachments", 3), validateRequest(createTicketSchema), createTicket);
+
+ticketRoutes.get("/", validateRequest(listTicketQuerySchema), listTickets);
+
+ticketRoutes.post(
+  "/",
+  upload.array("attachments", 3),
+  validateRequest(createTicketSchema),
+  createTicket
+);
+
 ticketRoutes.get("/:id", validateRequest(ticketIdParamSchema), getTicket);
-ticketRoutes.get("/:id/copilot", validateRequest(ticketIdParamSchema), requireRole("agent", "admin"), getCopilot);
+
+ticketRoutes.get(
+  "/:id/copilot",
+  validateRequest(ticketIdParamSchema),
+  requireRole("agent", "admin"),
+  getCopilot
+);
+
 ticketRoutes.post("/:id/messages", validateRequest(messageSchema), postTicketMessage);
+
 ticketRoutes.post("/:id/feedback", validateRequest(feedbackSchema), postFeedback);
+
 ticketRoutes.patch("/:id/status", validateRequest(statusSchema), patchTicketStatus);
-ticketRoutes.patch("/:id/assign", requireRole("admin"), validateRequest(assignSchema), patchTicketAssign);
+
+ticketRoutes.patch("/:id/reopen", validateRequest(reopenSchema), patchTicketReopen);
+
+ticketRoutes.patch(
+  "/:id/assign",
+  requireRole("admin"),
+  validateRequest(assignSchema),
+  patchTicketAssign
+);

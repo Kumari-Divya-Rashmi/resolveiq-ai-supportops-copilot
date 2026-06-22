@@ -32,7 +32,26 @@ export function AgentDashboard() {
     setLoading(true);
     setError("");
     try {
-      const data = await apiRequest("/tickets", { token });
+      
+      function buildTicketQuery() {
+      const params = new URLSearchParams();
+
+    if (query.trim()) params.set("q", query.trim());
+    if (status !== "all") params.set("status", status);
+    if (priority !== "all") params.set("priority", priority);
+    if (category !== "all") params.set("category", category);
+    if (slaRisk !== "all") params.set("slaRisk", slaRisk);
+
+    params.set("sortBy", "slaDueAt");
+    params.set("sortOrder", "asc");
+
+    return params.toString();
+    }
+
+      const queryString = buildTicketQuery();
+      const endpoint = queryString ? `/tickets?${queryString}` : "/tickets";
+
+      const data = await apiRequest(endpoint, { token });
       setTickets(data.tickets);
       setSelectedId((current) => current || data.tickets[0]?._id || "");
     } catch (err) {

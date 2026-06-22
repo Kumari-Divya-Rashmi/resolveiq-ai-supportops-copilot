@@ -7,6 +7,7 @@ import { healthRoutes } from "./healthRoutes.js";
 import { kbRoutes } from "./kbRoutes.js";
 import { teamRoutes } from "./teamRoutes.js";
 import { ticketRoutes } from "./ticketRoutes.js";
+import { userRoutes } from "./userRoutes.js";
 
 export const apiRoutes = Router();
 
@@ -18,3 +19,4 @@ apiRoutes.use("/ai", aiRoutes);
 apiRoutes.use("/kb", kbRoutes);
 apiRoutes.use("/analytics", analyticsRoutes);
 apiRoutes.use("/teams", teamRoutes);
+apiRoutes.use("/users", userRoutes);

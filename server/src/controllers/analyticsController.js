@@ -53,18 +53,47 @@ export const categoryWise = asyncHandler(async (_req, res) => {
 
 export const agentPerformance = asyncHandler(async (_req, res) => {
   const agents = await User.find({ role: "agent" }).select("name email team").lean();
+
   const performance = await Promise.all(
     agents.map(async (agent) => {
-      const [assigned, resolved] = await Promise.all([
-        Ticket.countDocuments({ assignedAgent: agent._id }),
-        Ticket.countDocuments({ assignedAgent: agent._id, status: { $in: ["resolved", "closed"] } })
-      ]);
+      const tickets = await Ticket.find({ assignedAgent: agent._id })
+        .select("status createdAt resolvedAt firstResponseAt")
+        .lean();
+
+      const assigned = tickets.length;
+
+      const resolvedTickets = tickets.filter((ticket) =>
+        ["resolved", "closed"].includes(ticket.status)
+      );
+
+      const resolved = resolvedTickets.length;
+      const open = Math.max(assigned - resolved, 0);
+
+      const resolutionRate = assigned ? Math.round((resolved / assigned) * 100) : 0;
+
+      const averageResolutionHours = resolvedTickets.length
+        ? resolvedTickets.reduce((sum, ticket) => {
+            if (!ticket.resolvedAt) return sum;
+            return sum + (ticket.resolvedAt - ticket.createdAt) / 36e5;
+          }, 0) / resolvedTickets.length
+        : 0;
+
+      const firstResponseTickets = tickets.filter((ticket) => ticket.firstResponseAt);
+
+      const averageFirstResponseHours = firstResponseTickets.length
+        ? firstResponseTickets.reduce((sum, ticket) => {
+            return sum + (ticket.firstResponseAt - ticket.createdAt) / 36e5;
+          }, 0) / firstResponseTickets.length
+        : 0;
 
       return {
         agent,
         assigned,
         resolved,
-        open: Math.max(assigned - resolved, 0)
+        open,
+        resolutionRate,
+        averageResolutionHours,
+        averageFirstResponseHours
       };
     })
   );
