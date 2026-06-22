@@ -36,25 +36,11 @@ function getTicketSummary(ticket) {
 function buildTicketQuery(filters) {
   const params = new URLSearchParams();
 
-  if (filters.query.trim()) {
-    params.set("q", filters.query.trim());
-  }
-
-  if (filters.status !== "all") {
-    params.set("status", filters.status);
-  }
-
-  if (filters.priority !== "all") {
-    params.set("priority", filters.priority);
-  }
-
-  if (filters.category !== "all") {
-    params.set("category", filters.category);
-  }
-
-  if (filters.slaRisk !== "all") {
-    params.set("slaRisk", filters.slaRisk);
-  }
+  if (filters.query.trim()) params.set("q", filters.query.trim());
+  if (filters.status !== "all") params.set("status", filters.status);
+  if (filters.priority !== "all") params.set("priority", filters.priority);
+  if (filters.category !== "all") params.set("category", filters.category);
+  if (filters.slaRisk !== "all") params.set("slaRisk", filters.slaRisk);
 
   params.set("sortBy", "updatedAt");
   params.set("sortOrder", "desc");
@@ -64,9 +50,9 @@ function buildTicketQuery(filters) {
 
 function EmptyState() {
   return (
-    <div className="grid min-h-[320px] place-items-center rounded-2xl border border-dashed border-line bg-white p-8 text-center">
+    <div className="grid min-h-[320px] place-items-center rounded-2xl border border-dashed border-line bg-panel p-8 text-center shadow-soft">
       <div>
-        <div className="mx-auto grid size-16 place-items-center rounded-3xl bg-blue-50 text-brand">
+        <div className="mx-auto grid size-16 place-items-center rounded-3xl bg-soft text-brand">
           <Inbox size={28} />
         </div>
 
@@ -90,9 +76,9 @@ function LoadingState() {
     <div className="grid gap-3">
       {[1, 2, 3, 4].map((item) => (
         <div key={item} className="card p-5">
-          <div className="h-4 w-48 animate-pulse rounded bg-slate-200" />
-          <div className="mt-3 h-3 w-full animate-pulse rounded bg-slate-100" />
-          <div className="mt-2 h-3 w-2/3 animate-pulse rounded bg-slate-100" />
+          <div className="h-4 w-48 animate-pulse rounded bg-slate-200 dark:bg-slate-700" />
+          <div className="mt-3 h-3 w-full animate-pulse rounded bg-slate-100 dark:bg-slate-800" />
+          <div className="mt-2 h-3 w-2/3 animate-pulse rounded bg-slate-100 dark:bg-slate-800" />
         </div>
       ))}
     </div>
@@ -116,9 +102,7 @@ export function MyTicketsPage() {
 
     try {
       const queryString = buildTicketQuery(appliedFilters);
-      const endpoint = queryString ? `/tickets?${queryString}` : "/tickets";
-
-      const data = await apiRequest(endpoint, { token });
+      const data = await apiRequest(`/tickets?${queryString}`, { token });
 
       setTickets(data.tickets || []);
       setPagination(data.pagination || null);
@@ -134,17 +118,19 @@ export function MyTicketsPage() {
   }, [loadTickets]);
 
   const stats = useMemo(() => {
-    const open = tickets.filter((ticket) => ticket.status === "open").length;
-    const urgent = tickets.filter((ticket) => ticket.priority === "urgent").length;
-    const resolved = tickets.filter((ticket) => ticket.status === "resolved").length;
-
     return {
       total: tickets.length,
-      open,
-      urgent,
-      resolved
+      open: tickets.filter((ticket) => ticket.status === "open").length,
+      urgent: tickets.filter((ticket) => ticket.priority === "urgent").length,
+      resolved: tickets.filter((ticket) => ticket.status === "resolved").length
     };
   }, [tickets]);
+
+  const hasActiveFilters = useMemo(() => {
+    return Object.keys(appliedFilters).some(
+      (key) => appliedFilters[key] !== initialFilters[key]
+    );
+  }, [appliedFilters]);
 
   function updateFilter(name, value) {
     setFilters((previous) => ({
@@ -162,16 +148,10 @@ export function MyTicketsPage() {
     setAppliedFilters(initialFilters);
   }
 
-  const hasActiveFilters = useMemo(() => {
-    return Object.keys(appliedFilters).some(
-      (key) => appliedFilters[key] !== initialFilters[key]
-    );
-  }, [appliedFilters]);
-
   return (
     <>
       <PageHeader
-        eyebrow="Customer workspace"
+        eyebrow="Tickets"
         title="My Tickets"
         description="Track your support tickets, AI summaries, priorities, SLA risk, and latest updates."
         action={
@@ -190,7 +170,7 @@ export function MyTicketsPage() {
       />
 
       {error ? (
-        <div className="mb-5 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
+        <div className="mb-5 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300">
           <AlertCircle size={18} className="mt-0.5 shrink-0" />
           {error}
         </div>
@@ -198,27 +178,25 @@ export function MyTicketsPage() {
 
       <section className="grid gap-4 md:grid-cols-4">
         <div className="card p-5">
-          <p className="text-xs font-bold uppercase tracking-wide text-muted">
-            Total tickets
-          </p>
+          <p className="text-xs font-bold uppercase tracking-wide text-muted">Total tickets</p>
           <p className="mt-2 text-3xl font-bold text-ink">{stats.total}</p>
         </div>
 
         <div className="card p-5">
           <p className="text-xs font-bold uppercase tracking-wide text-muted">Open</p>
-          <p className="mt-2 text-3xl font-bold text-blue-700">{stats.open}</p>
+          <p className="mt-2 text-3xl font-bold text-brand">{stats.open}</p>
         </div>
 
         <div className="card p-5">
           <p className="text-xs font-bold uppercase tracking-wide text-muted">Urgent</p>
-          <p className="mt-2 text-3xl font-bold text-red-700">{stats.urgent}</p>
+          <p className="mt-2 text-3xl font-bold text-red-600 dark:text-red-400">
+            {stats.urgent}
+          </p>
         </div>
 
         <div className="card p-5">
-          <p className="text-xs font-bold uppercase tracking-wide text-muted">
-            Resolved
-          </p>
-          <p className="mt-2 text-3xl font-bold text-emerald-700">
+          <p className="text-xs font-bold uppercase tracking-wide text-muted">Resolved</p>
+          <p className="mt-2 text-3xl font-bold text-emerald-600 dark:text-emerald-400">
             {stats.resolved}
           </p>
         </div>
@@ -316,7 +294,7 @@ export function MyTicketsPage() {
           </button>
 
           {hasActiveFilters ? (
-            <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700">
+            <span className="inline-flex items-center rounded-full border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-bold text-blue-700 dark:border-blue-900/60 dark:bg-blue-950/40 dark:text-blue-300">
               Filters active
             </span>
           ) : null}
@@ -337,7 +315,7 @@ export function MyTicketsPage() {
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                   <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-3">
-                      <div className="grid size-10 place-items-center rounded-xl bg-blue-50 text-brand">
+                      <div className="grid size-10 place-items-center rounded-xl bg-soft text-brand">
                         <TicketCheck size={19} />
                       </div>
 
@@ -367,7 +345,7 @@ export function MyTicketsPage() {
                   <div className="flex flex-wrap gap-2 lg:justify-end">
                     <StatusBadge value={ticket.category} />
                     <StatusBadge value={ticket.priority} />
-                    <StatusBadge value={ticket.slaRisk} />
+                    {ticket.slaRisk ? <StatusBadge value={ticket.slaRisk} /> : null}
                     <StatusBadge value={ticket.status} />
                   </div>
                 </div>
@@ -379,7 +357,7 @@ export function MyTicketsPage() {
         )}
 
         {pagination ? (
-          <div className="mt-5 rounded-xl border border-line bg-white p-4 text-sm font-semibold text-muted">
+          <div className="mt-5 rounded-xl border border-line bg-panel p-4 text-sm font-semibold text-muted">
             Showing page {pagination.page} of {pagination.pages} — {pagination.total} total tickets
           </div>
         ) : null}

@@ -56,13 +56,14 @@ export function ChatPage() {
       });
 
       setResult(data);
+
       setConversation((previous) => [
         ...previous,
         { role: "user", text: userMessage },
         { role: "ai", text: data.answer || "No answer generated." }
       ]);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "AI request failed.");
     } finally {
       setLoading(false);
     }
@@ -86,7 +87,7 @@ export function ChatPage() {
 
       navigate(`/app/tickets/${data.ticket._id}`);
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Ticket creation failed.");
     } finally {
       setLoading(false);
     }
@@ -102,14 +103,17 @@ export function ChatPage() {
 
       <div className="grid gap-6 xl:grid-cols-[1fr_380px]">
         <section className="card overflow-hidden shadow-panel">
-          <div className="border-b border-line bg-white px-5 py-4">
+          <div className="border-b border-line bg-panel px-5 py-4">
             <div className="flex items-center gap-3">
-              <div className="grid size-11 place-items-center rounded-2xl bg-blue-50 text-brand">
+              <div className="grid size-11 place-items-center rounded-2xl bg-soft text-brand">
                 <Bot size={22} />
               </div>
+
               <div>
-                <h2 className="text-sm font-bold">ResolveIQ AI Assistant</h2>
-                <p className="text-xs text-muted">Knowledge-base grounded support response</p>
+                <h2 className="text-sm font-bold text-ink">ResolveIQ AI Assistant</h2>
+                <p className="text-xs text-muted">
+                  Knowledge-base grounded support response
+                </p>
               </div>
             </div>
           </div>
@@ -118,12 +122,17 @@ export function ChatPage() {
             {conversation.length === 0 ? (
               <div className="grid min-h-[360px] place-items-center text-center">
                 <div>
-                  <div className="mx-auto grid size-16 place-items-center rounded-3xl bg-white text-brand shadow-soft">
+                  <div className="mx-auto grid size-16 place-items-center rounded-3xl bg-panel text-brand shadow-soft">
                     <Sparkles size={28} />
                   </div>
-                  <h3 className="mt-5 text-xl font-bold">Ask your first support question</h3>
+
+                  <h3 className="mt-5 text-xl font-bold text-ink">
+                    Ask your first support question
+                  </h3>
+
                   <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-muted">
-                    Try asking about password reset, refund policy, shipment tracking, or billing issues.
+                    Try asking about password reset, refund policy, shipment tracking,
+                    or billing issues.
                   </p>
                 </div>
               </div>
@@ -132,7 +141,9 @@ export function ChatPage() {
                 {conversation.map((item, index) => (
                   <div
                     key={`${item.role}-${index}`}
-                    className={`flex gap-3 ${item.role === "user" ? "justify-end" : "justify-start"}`}
+                    className={`flex gap-3 ${
+                      item.role === "user" ? "justify-end" : "justify-start"
+                    }`}
                   >
                     {item.role === "ai" ? (
                       <div className="grid size-9 shrink-0 place-items-center rounded-full bg-brand text-white">
@@ -144,14 +155,14 @@ export function ChatPage() {
                       className={`max-w-[85%] rounded-2xl px-4 py-3 text-sm leading-6 shadow-soft ${
                         item.role === "user"
                           ? "bg-brand text-white"
-                          : "border border-line bg-white text-slate-700"
+                          : "border border-line bg-panel text-ink"
                       }`}
                     >
                       {item.text}
                     </div>
 
                     {item.role === "user" ? (
-                      <div className="grid size-9 shrink-0 place-items-center rounded-full bg-slate-900 text-white">
+                      <div className="grid size-9 shrink-0 place-items-center rounded-full bg-panel text-brand ring-1 ring-line">
                         <UserRound size={17} />
                       </div>
                     ) : null}
@@ -161,21 +172,21 @@ export function ChatPage() {
             )}
 
             {loading ? (
-              <div className="mt-4 flex items-center gap-3 rounded-2xl border border-line bg-white p-4 text-sm font-semibold text-muted shadow-soft">
+              <div className="mt-4 flex items-center gap-3 rounded-2xl border border-line bg-panel p-4 text-sm font-semibold text-muted shadow-soft">
                 <div className="size-2 animate-pulse rounded-full bg-brand" />
                 ResolveIQ is thinking...
               </div>
             ) : null}
           </div>
 
-          <form onSubmit={ask} className="border-t border-line bg-white p-4">
+          <form onSubmit={ask} className="border-t border-line bg-panel p-4">
             {error ? (
-              <p className="mb-3 rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700">
+              <p className="mb-3 rounded-xl border border-red-200 bg-red-50 p-3 text-sm font-semibold text-red-700 dark:border-red-900/60 dark:bg-red-950/40 dark:text-red-300">
                 {error}
               </p>
             ) : null}
 
-            <label className="block text-sm font-semibold">
+            <label className="block text-sm font-semibold text-ink">
               Support question
               <textarea
                 className="input-field mt-2 min-h-28 resize-none"
@@ -186,7 +197,7 @@ export function ChatPage() {
             </label>
 
             <div className="mt-4 flex flex-wrap gap-3">
-              <button disabled={loading} className="btn-primary disabled:opacity-60">
+              <button disabled={loading} className="btn-primary">
                 <Send size={16} />
                 Ask AI
               </button>
@@ -195,7 +206,7 @@ export function ChatPage() {
                 type="button"
                 onClick={createTicket}
                 disabled={loading}
-                className="btn-secondary disabled:opacity-60"
+                className="btn-secondary"
               >
                 <TicketPlus size={16} />
                 Still need help
@@ -207,11 +218,12 @@ export function ChatPage() {
         <aside className="space-y-5">
           <div className="card p-5 shadow-panel">
             <div className="flex items-center gap-3">
-              <div className="grid size-10 place-items-center rounded-xl bg-blue-50 text-brand">
+              <div className="grid size-10 place-items-center rounded-xl bg-soft text-brand">
                 <BrainCircuit size={20} />
               </div>
+
               <div>
-                <h2 className="text-sm font-bold">AI Decision Panel</h2>
+                <h2 className="text-sm font-bold text-ink">AI Decision Panel</h2>
                 <p className="text-xs text-muted">Live response metadata</p>
               </div>
             </div>
@@ -219,12 +231,18 @@ export function ChatPage() {
             {result ? (
               <div className="mt-5 space-y-3">
                 <div className="rounded-xl border border-line bg-soft p-4">
-                  <p className="text-xs font-bold uppercase tracking-wide text-muted">Confidence</p>
-                  <p className="mt-1 text-3xl font-bold text-ink">{safeConfidence(result.confidence)}%</p>
+                  <p className="text-xs font-bold uppercase tracking-wide text-muted">
+                    Confidence
+                  </p>
+                  <p className="mt-1 text-3xl font-bold text-ink">
+                    {safeConfidence(result.confidence)}%
+                  </p>
                 </div>
 
                 <div className="rounded-xl border border-line bg-soft p-4">
-                  <p className="text-xs font-bold uppercase tracking-wide text-muted">Intent</p>
+                  <p className="text-xs font-bold uppercase tracking-wide text-muted">
+                    Intent
+                  </p>
                   <p className="mt-1 text-sm font-bold capitalize text-ink">
                     {result.intent?.intent?.replaceAll("_", " ") || "Support question"}
                   </p>
@@ -233,16 +251,19 @@ export function ChatPage() {
                 <div
                   className={`rounded-xl border p-4 ${
                     result.shouldCreateTicket
-                      ? "border-orange-200 bg-orange-50 text-orange-800"
-                      : "border-emerald-200 bg-emerald-50 text-emerald-800"
+                      ? "border-orange-200 bg-orange-50 text-orange-800 dark:border-orange-900/60 dark:bg-orange-950/30 dark:text-orange-300"
+                      : "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-300"
                   }`}
                 >
                   <div className="flex items-center gap-2">
                     <ShieldAlert size={17} />
                     <p className="text-sm font-bold">
-                      {result.shouldCreateTicket ? "Ticket recommended" : "AI answer is confident"}
+                      {result.shouldCreateTicket
+                        ? "Ticket recommended"
+                        : "AI answer is confident"}
                     </p>
                   </div>
+
                   <p className="mt-2 text-sm leading-6">
                     {result.shouldCreateTicket
                       ? "The system recommends creating a support ticket for agent review."
@@ -259,18 +280,20 @@ export function ChatPage() {
               </div>
             ) : (
               <p className="mt-5 text-sm leading-6 text-muted">
-                Ask a question to see confidence, intent, sources, and ticket recommendation.
+                Ask a question to see confidence, intent, sources, and ticket
+                recommendation.
               </p>
             )}
           </div>
 
           <div className="card p-5 shadow-panel">
             <div className="flex items-center gap-3">
-              <div className="grid size-10 place-items-center rounded-xl bg-blue-50 text-brand">
+              <div className="grid size-10 place-items-center rounded-xl bg-soft text-brand">
                 <FileText size={20} />
               </div>
+
               <div>
-                <h2 className="text-sm font-bold">Matched sources</h2>
+                <h2 className="text-sm font-bold text-ink">Matched sources</h2>
                 <p className="text-xs text-muted">Knowledge base articles</p>
               </div>
             </div>
@@ -278,20 +301,27 @@ export function ChatPage() {
             <div className="mt-4 space-y-2">
               {result?.sources?.length ? (
                 result.sources.map((source, index) => (
-                  <div key={`${getSourceLabel(source)}-${index}`} className="rounded-xl border border-line bg-soft p-3">
-                    <p className="text-sm font-semibold">{getSourceLabel(source)}</p>
+                  <div
+                    key={`${getSourceLabel(source)}-${index}`}
+                    className="rounded-xl border border-line bg-soft p-3"
+                  >
+                    <p className="text-sm font-semibold text-ink">
+                      {getSourceLabel(source)}
+                    </p>
                   </div>
                 ))
               ) : (
                 <p className="text-sm leading-6 text-muted">
-                  Sources will appear after AI retrieves relevant knowledge base content.
+                  Sources will appear after AI retrieves relevant knowledge base
+                  content.
                 </p>
               )}
             </div>
           </div>
 
           <div className="card p-5 shadow-panel">
-            <h2 className="text-sm font-bold">How it works</h2>
+            <h2 className="text-sm font-bold text-ink">How it works</h2>
+
             <ol className="mt-3 space-y-3 text-sm leading-6 text-muted">
               <li>1. Message is checked for risky prompt patterns.</li>
               <li>2. Support intent is detected.</li>
